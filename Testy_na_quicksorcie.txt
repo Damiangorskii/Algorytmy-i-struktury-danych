@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include<time.h>
+#define MAX 60000l
+#define MLD 1000000000.0
+
+
+
+int Partition (int A[],int p,int r)
+{
+    int x,i, j, temp;
+
+    x = A[r];
+    i = p-1;
+
+    for (j=p; j<=r; j++)
+    {
+        if (A[j] <= x)
+        {
+            i++;
+            temp = A[i];
+            A[i] = A[j];
+            A[j] = temp;
+
+        }
+    }
+    if (i<r)
+    {
+        return i;
+    }
+    else
+    {
+        return i-1;
+    }
+}
+
+void Quicksort(int A[],int p,int r)
+{
+    int q;
+    if (p<r)
+    {
+        q = Partition(A,p,r);
+        Quicksort(A,p,q);
+        Quicksort(A,q+1,r);
+    }
+}
+
+
+
+
+int main()
+{
+    double czas_temp  = 0;
+    int size = 2500;
+    int liczba_powtorzen_algorytmu;
+    for (liczba_powtorzen_algorytmu=0;liczba_powtorzen_algorytmu<2500;liczba_powtorzen_algorytmu++){
+    FILE *plik;
+    FILE *wyjscie;
+    int liczba,i=0;
+    plik=fopen("liczby.txt","w");
+    //ROZMIAR TABLICY I TWORZENIE RANDOMOWYCH LICZB
+    int A[size];
+    srand(time(0));
+
+    i=0;
+    for (i;i<size;i++)
+    {
+        //Dane losowe
+        //A[i] = rand()%1000+1;
+        //Dane niekorzystne(rosn¹co)
+        A[i] = i;
+        fprintf(plik,"%d\n", A[i]);
+    }
+    fclose(plik);
+
+    //Otwiera plik w celu przepisania zawartosci pliku do tablicy
+    plik = fopen("liczby.txt","r");
+    if (plik == NULL)
+    {
+        printf("Blad otwarcia pliku \"liczby.txt\"\n");
+        return 1;
+    }
+    //printf("Input: \n");
+    int tab[size];
+    int j=0;
+    //Dla danych losowych, nie wiem z jakiego powodu ale musze dodwaæ warunek && j<size
+    while (feof(plik) == 0)
+    {
+
+        fscanf(plik,"%d", &liczba);
+        tab[j] = liczba;
+        //printf("%d\n", tab[j]);
+        j++;
+    }
+    fclose(plik);
+
+    //TESTY CZASU
+    double Tn;
+    struct timespec tp0, tp1;
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID,&tp0);
+
+    Quicksort(tab,0,size);
+
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID,&tp1);
+
+    Tn=(tp1.tv_sec+tp1.tv_nsec/MLD)-(tp0.tv_sec+tp0.tv_nsec/MLD);
+    printf("\tczas: %3.10lf \n", Tn);
+
+    czas_temp+=Tn;
+
+    i=0;
+    wyjscie=fopen("wyjscie.txt","w");
+    //printf("Output: \n");
+    for (i;i<size;i++)
+    {
+        //printf("%d\n", tab[i]);
+        fprintf(wyjscie,"%d\n", tab[i]);
+    }
+    fclose(wyjscie);
+    }
+    printf("Czas sredni dla %d elementow  i %d powtorzen to: %3.10lf", size, liczba_powtorzen_algorytmu,  czas_temp/liczba_powtorzen_algorytmu);
+
+
+
+
+
+    return 0;
+}
