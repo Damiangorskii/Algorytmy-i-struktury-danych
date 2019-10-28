@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+
+
+void Heapify(int tab[], int i, int wysokosc)
+{
+    //Sprawdzanie kopca lokalnego, który sprawdza czy ojciec jest wiêkszy od synów - jak nie to zamiana
+    int l = (2*i)+1;
+    int r = (2*i)+2;
+    int temp=0;
+    int largest=0;
+    int heapSize=wysokosc;
+    //jeśli lewy wiekszy niz korzen
+    if(l<heapSize && tab[l]>=tab[i])
+    {
+        largest = l;
+    }
+    else
+    {
+        largest = i;
+    }
+    //jesli prawy wiekszy niz najwiekszy ostatni
+    if(r<heapSize && tab[r]>=tab[largest])
+    {
+        largest = r;
+    }
+    //jesli korzen nie jest najwiekszy to kopcowanie
+    if (largest != i)
+    {
+        temp = tab[i];
+        tab[i] = tab[largest];
+        tab[largest] = temp;
+        Heapify(tab,largest, wysokosc-1);
+    }
+}
+
+
+void heapSort(int tab[], int wysokosc)
+{
+    //buduj kopiec
+    int i = (wysokosc/2)-1;
+    for (i;i>=0;i--)
+    {
+        Heapify(tab,i,wysokosc);
+    }
+    //
+    int temp=0;
+    i=wysokosc;
+    for (i;i>=1;i--)
+    {
+        //Zamiana korzenia z ostatnim liœciem
+        temp = tab[wysokosc-1];
+        tab[wysokosc-1] = tab[0];
+        tab[0] = temp;
+        wysokosc--;
+        //Znowu tworzymy drzewo
+        Heapify(tab,0, wysokosc);
+    }
+}
+
+int main()
+{
+   FILE *plik;
+   FILE *wyjscie;
+   int liczba,i=0;
+
+
+    //Czyta plik w celu policzenia rozmiaru tablicy / ile jest wierszy
+   plik = fopen("liczby.txt","r");
+   if (plik == NULL)
+   {
+      printf("Blad otwarcia pliku \"liczby.txt\"\n");
+      return 1;
+   }
+
+   printf("Ok. Zaczynam czytac plik:\n");
+   printf("Input: \n");
+
+   while(feof(plik) == 0)
+   {
+      fscanf(plik,"%d",&liczba);
+      i++;
+   }
+   int counter = i;
+   fclose(plik);
+   //Otwiera plik w celu przepisania zawartosci pliku do tablicy
+   plik = fopen("liczby.txt","r");
+   int tab[counter];
+   int j=0;
+   while (feof(plik) == 0)
+   {
+
+       fscanf(plik,"%d", &liczba);
+       tab[j] = liczba;
+       j++;
+   }
+   //Wypisanie tablicy
+   int z=0;
+   while (z<counter)
+   {
+       printf("%d\n", tab[z]);
+       z++;
+   }
+   //SORTUJE
+   heapSort(tab,counter);
+   int x=0;
+   wyjscie=fopen("wyjscie.txt","w");
+
+   //Zapisanie posortowanej tablicy do pliku
+   printf("Output: \n");
+    for (x;x<counter;x++)
+   {
+       printf("%d, ", tab[x]);
+       fprintf(wyjscie,"%d\n", tab[x]);
+   }
+   fclose(wyjscie);
+
+
+   return 0;
+}
