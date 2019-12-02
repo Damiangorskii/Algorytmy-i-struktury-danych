@@ -1,0 +1,89 @@
+package counting_sort;
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class main2 {
+	
+	static String[] counting_sort_letters(String A[], int k, int radix,int tabSize) {
+	    int C[] = new int [k];
+	    String B[] = new String[tabSize];
+
+	    for (int i=0;i<k;i++){
+	        C[i] = 0;
+	    }
+	    for (int i=0;i<A.length;i++){
+	    		C[A[i].toLowerCase().charAt(radix)-97] = C[A[i].toLowerCase().charAt(radix)-97]+1;
+	    }
+	    for (int i=1;i<k;i++){
+	        C[i]=C[i]+C[i-1];
+	    }
+	    for (int i=A.length-1;i>=0;i--){
+	    		B[C[A[i].toLowerCase().charAt(radix)-97]-1] = A[i];
+		        C[A[i].toLowerCase().charAt(radix)-97] = C[A[i].toLowerCase().charAt(radix)-97]-1;
+	    }
+	    return B;
+	}
+	static String[] counting_sort_numbers(String A[], int k, int radix, int tabSize) {
+	    int C[] = new int [k];
+	    String B[] = new String[tabSize];
+	    for (int i=0;i<k;i++){
+	        C[i] = 0;
+	    }
+	    for (int i=0;i<A.length;i++){
+	    		C[A[i].charAt(radix)-48] = C[A[i].charAt(radix)-48]+1;
+	    }
+	    for (int i=1;i<k;i++){
+	        C[i]=C[i]+C[i-1];
+	    }
+	    for (int i=A.length-1;i>=0;i--){
+	    		B[C[A[i].charAt(radix)-48]-1] = A[i];
+		        C[A[i].charAt(radix)-48] = C[A[i].charAt(radix)-48]-1;
+	    }
+	    return B;
+	}
+	
+	static String[] radixSort_letters(String A[], int d,int k, int tabSize) {
+		for (int i=d-1;i>=0;i--) {
+			A = counting_sort_letters(A,k,i,tabSize);
+		}
+		return A;
+	}
+	static String[] radixSort_numbers(String A[], int d,int k, int tabSize) {
+		for (int i=d-1;i>=0;i--) {
+			A = counting_sort_numbers(A,10,i, tabSize);
+		}
+		return A;
+	}
+	
+	public static void main (String args[]) {
+		
+		int size = 3;
+		Scanner skaner = new Scanner(System.in);
+		String A[] = new String [size];
+		String C[] = new String [size];
+		String D[] = new String[size];
+		
+		System.out.println("Podaj 3 słowa: ");
+		for (int i=0;i<size;i++) {
+			A[i] = skaner.next();
+			if (A[i].length()!=7) {
+				i--;
+			}
+		}
+		System.out.println(Arrays.toString(radixSort_letters(A,7,26,size)));
+		
+		
+		System.out.println("Podaj 3 ciągi cyfr: ");
+		for (int i=0;i<size;i++) {
+			C[i] = skaner.next();
+			if (C[i].length()!=7) {
+				i--;
+			}
+		}
+		System.out.println(Arrays.toString(radixSort_numbers(C,7,10,size)));
+		
+		
+	}
+
+}
